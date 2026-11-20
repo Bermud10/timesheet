@@ -1,0 +1,20 @@
+<tr id="day-{{ row.date|date:'Y-m-d' }}" class="{{ row.css }}">
+ <td>{{ row.date|date:"d.m" }}</td>
+ <td>{{ row.weekday }}</td>
+ <td>{{ row.type_label }}</td>
+ <td colspan="5">
+  <form hx-post="{% url 'core:save_day' employee.id row.date|date:'Y-m-d' %}"
+        hx-target="closest tr" hx-swap="outerHTML" hx-trigger="change">
+   {% csrf_token %}
+   <select name="status">
+    {% for val, label in statuses %}
+     <option value="{{ val }}" {% if row.status == val %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+   </select>
+   <input type="time" name="time_in" value="{% if row.time_in %}{{ row.time_in|time:'H:i' }}{% endif %}">
+   <input type="time" name="time_out" value="{% if row.time_out %}{{ row.time_out|time:'H:i' }}{% endif %}">
+   <span>{{ row.hours|floatformat:1 }}</span>
+   <span>{{ row.overtime|floatformat:1 }}</span>
+  </form>
+ </td>
+</tr>

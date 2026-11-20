@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ employee.short_name }} — {{ month_label }}</h1>
+<p><a href="?year={{ prev.y }}&month={{ prev.m }}">←</a>
+   <a href="?year={{ next.y }}&month={{ next.m }}">→</a></p>
+<p>Отработано {{ sum.hours|floatformat:1 }} / {{ sum.norm|floatformat:0 }} ч ·
+   Переработки {{ sum.overtime|floatformat:1 }} ч ·
+   Командировочные {{ sum.trip_overtime|floatformat:1 }} ч</p>
+<form method="post" action="{% url 'core:bulk_fill' employee.id %}">
+ {% csrf_token %}
+ <input type="hidden" name="year" value="{{ year }}">
+ <input type="hidden" name="month" value="{{ month }}">
+ С <input type="date" name="start" value="{{ month_start|date:'Y-m-d' }}">
+ по <input type="date" name="end" value="{{ month_end|date:'Y-m-d' }}">
+ <button class="btn">Заполнить по норме (пропуская выходные)</button>
+</form>
+<table>
+<tr><th>Дата</th><th>День</th><th>Тип</th><th>Статус</th><th>Пришёл</th><th>Ушёл</th><th>Часы</th><th>Перераб.</th></tr>
+{% for row in rows %}{% include "core/_day_row.html" %}{% endfor %}
+</table>
+{% endblock %}
